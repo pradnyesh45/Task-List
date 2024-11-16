@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify, request
 from .models import Task
 from . import db
+from datetime import datetime
 
 bp = Blueprint('main', __name__)
 
@@ -10,21 +11,51 @@ def home():
 
 @bp.route('/tasks', methods=['POST'])
 def create_task():
-    data = request.json
-    new_task = Task(
-        entity_name=data['entity_name'],
-        task_type=data['task_type'],
-        task_time=data['task_time'],
-        contact_person=data['contact_person'],
-        note=data.get('note')
-    )
-    db.session.add(new_task)
-    db.session.commit()
-    return jsonify({'message': 'Task created'}), 201
+    try:
+        data = request.get_json()
+        
+        # Convert task_time string to datetime object
+        task_time = datetime.strptime(data['task_time'], '%Y-%m-%dT%H:%M')
+        
+        # Create new task with current timestamp
+        new_task = Task(
+            creation_date=datetime.utcnow(),  # Add current timestamp
+            entity_name=data['entity_name'],
+            task_type=data['task_type'],
+            task_time=task_time,  # Use converted datetime
+            contact_person=data['contact_person'],
+            note=data.get('note', ''),
+            status='open'  # Default status
+        )
+        
+        db.session.add(new_task)
+        db.session.commit()
+        
+        return jsonify({"message": "Task created successfully"}), 201
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error: {str(e)}")  # Debug log
+        return jsonify({"error": str(e)}), 500
 
 @bp.route('/tasks', methods=['GET'])
 def get_tasks():
-    tasks = Task.query.all()
+    query = Task.query
+    filters = request.args
+
+    # Filtering by query parameters
+    if 'contact_person' in filters:
+        query = query.filter(Task.contact_person == filters['contact_person'])
+    if 'task_type' in filters:
+        query = query.filter(Task.task_type == filters['task_type'])
+    if 'status' in filters:
+        query = query.filter(Task.status == filters['status'])
+    if 'entity_name' in filters:
+        query = query.filter(Task.entity_name == filters['entity_name'])
+    if 'date' in filters:
+        query = query.filter(Task.creation_date == filters['date'])
+
+    tasks = query.all()
     return jsonify([{
         'id': task.id,
         'creation_date': task.creation_date,

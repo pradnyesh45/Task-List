@@ -1,17 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-
-export interface Task {
-  id?: number;
-  creation_date?: string;
-  entity_name: string;
-  task_type: string;
-  task_time: string;
-  contact_person: string;
-  note?: string;
-  status?: string;
-}
+import { Task } from './models/task.model';
 
 @Injectable({
   providedIn: 'root',
@@ -21,16 +11,32 @@ export class TaskService {
 
   constructor(private http: HttpClient) {}
 
-  createTask(task: Task): Observable<any> {
+  getTasks(filters?: {
+    contact_person?: string;
+    task_type?: string;
+    status?: string;
+    entity_name?: string;
+    date?: string;
+  }): Observable<Task[]> {
+    let url = this.apiUrl;
+    if (filters) {
+      const params = new URLSearchParams();
+      Object.entries(filters).forEach(([key, value]) => {
+        if (value) params.append(key, value);
+      });
+      if (params.toString()) {
+        url += '?' + params.toString();
+      }
+    }
+    return this.http.get<Task[]>(url);
+  }
+
+  addTask(task: Omit<Task, 'id' | 'creation_date'>): Observable<any> {
     return this.http.post(this.apiUrl, task);
   }
 
-  getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.apiUrl);
-  }
-
-  updateTask(task: Task): Observable<any> {
-    return this.http.put(`${this.apiUrl}/${task.id}`, task);
+  updateTask(id: number, task: Partial<Task>): Observable<any> {
+    return this.http.put(`${this.apiUrl}/${id}`, task);
   }
 
   deleteTask(id: number): Observable<any> {
