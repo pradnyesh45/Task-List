@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from .models import Task
 from . import db
 from datetime import datetime
+import dateutil.parser
 
 bp = Blueprint('main', __name__)
 
@@ -69,16 +70,36 @@ def get_tasks():
 
 @bp.route('/tasks/<int:task_id>', methods=['PUT'])
 def update_task(task_id):
-    data = request.json
-    task = Task.query.get_or_404(task_id)
-    task.entity_name = data['entity_name']
-    task.task_type = data['task_type']
-    task.task_time = data['task_time']
-    task.contact_person = data['contact_person']
-    task.note = data.get('note')
-    task.status = data.get('status', task.status)
-    db.session.commit()
-    return jsonify({'message': 'Task updated'})
+    try:
+        data = request.get_json()
+        task = Task.query.get_or_404(task_id)
+        
+        # Update fields only if they exist in the request
+        if 'entity_name' in data:
+            task.entity_name = data['entity_name']
+        if 'task_type' in data:
+            task.task_type = data['task_type']
+        if 'task_time' in data:
+            try:
+                # More flexible date parsing
+                task_time = dateutil.parser.parse(data['task_time'])
+                task.task_time = task_time
+            except ValueError as e:
+                return jsonify({'error': f'Invalid date format: {str(e)}'}), 400
+        if 'contact_person' in data:
+            task.contact_person = data['contact_person']
+        if 'note' in data:
+            task.note = data['note']
+        if 'status' in data:
+            task.status = data['status']
+            
+        db.session.commit()
+        return jsonify({'message': 'Task updated successfully'}), 200
+        
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating task: {str(e)}")  # Debug log
+        return jsonify({'error': str(e)}), 500
 
 @bp.route('/tasks/<int:task_id>', methods=['DELETE'])
 def delete_task(task_id):

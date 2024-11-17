@@ -8,29 +8,54 @@ import { Task } from '../models/task.model';
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:5000/tasks'; // Adjust the URL as needed
+  private apiUrl = 'http://localhost:5000'; // Base URL
 
   private httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
     }),
-    withCredentials: true,
   };
 
   constructor(private http: HttpClient) {}
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(this.apiUrl, this.httpOptions);
+    return this.http.get<Task[]>(`${this.apiUrl}/tasks`);
   }
 
-  addTask(task: any): Observable<any> {
-    return this.http.post(`${this.apiUrl}`, task, this.httpOptions).pipe(
-      catchError((error) => {
-        console.error('Error:', error);
-        return throwError(() => error);
-      })
-    );
+  updateTask(id: number, task: Partial<Task>): Observable<any> {
+    const formattedTask = {
+      ...task,
+      task_time: this.formatDateForBackend(task.task_time),
+    };
+
+    return this.http
+      .put(`${this.apiUrl}/tasks/${id}`, formattedTask, this.httpOptions)
+      .pipe(
+        catchError((error) => {
+          console.error('Error details:', error);
+          return throwError(() => error);
+        })
+      );
   }
 
-  // Add methods for create, update, delete tasks
+  private formatDateForBackend(
+    date: string | Date | undefined
+  ): string | undefined {
+    if (!date) return undefined;
+
+    const d = new Date(date);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+      2,
+      '0'
+    )}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(
+      2,
+      '0'
+    )}:${String(d.getMinutes()).padStart(2, '0')}`;
+  }
+
+  deleteTask(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/tasks/${id}`, this.httpOptions);
+  }
+
+  // ... other methods
 }
