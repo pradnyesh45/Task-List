@@ -1,26 +1,46 @@
-<div class="task-list">
-  <div class="header-row">
-    <div class="task-content">
-      <div class="entity-name">Entity Name</div>
-      <div class="task-type">Task Type</div>
-      <div class="task-time">Time</div>
-      <div class="contact">Contact Person</div>
-      <div class="status">Status</div>
-    </div>
-    <div class="actions">Actions</div>
-  </div>
-
-  <div class="task-row" *ngFor="let task of tasks">
-    <div class="task-content">
-      <div class="entity-name">{{ task.entity_name }}</div>
-      <div class="task-type">{{ task.task_type }}</div>
-      <div class="task-time">{{ task.task_time | date : "short" }}</div>
-      <div class="contact">{{ task.contact_person }}</div>
-      <div class="status">{{ task.status }}</div>
-    </div>
-    <div class="actions">
-      <button (click)="startEdit(task)">Edit</button>
-      <button (click)="deleteTask(task.id)">Delete</button>
-    </div>
-  </div>
-</div>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th scope="col">Date</th>
+      <th scope="col">Entity Name</th>
+      <th scope="col">Task Type</th>
+      <th scope="col">Contact Person</th>
+      <th scope="col">Notes</th>
+      <th scope="col">Status</th>
+      <th scope="col">Options</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let task of tasks">
+      <td>{{ task.task_time | date : "medium" }}</td>
+      <td>{{ task.entity_name }}</td>
+      <td>{{ task.task_type }}</td>
+      <td>{{ task.contact_person }}</td>
+      <td>{{ task.note }}</td>
+      <td>{{ task.status }}</td>
+      <td>
+        <div class="dropdown">
+          <button
+            class="btn btn-secondary btn-sm dropdown-toggle"
+            type="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+          >
+            Options
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" (click)="startEdit(task)">Edit</a></li>
+            <li>
+              <a class="dropdown-item" (click)="duplicateTask(task)"
+                >Duplicate</a
+              >
+            </li>
+            <li>
+              <a class="dropdown-item" (click)="closeTask(task)">Close Task</a>
+            </li>
+          </ul>
+        </div>
+      </td>
+    </tr>
+  </tbody>
+</table>

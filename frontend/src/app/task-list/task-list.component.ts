@@ -57,4 +57,16 @@ export class TaskListComponent implements OnInit {
       });
     }
   }
+
+  duplicateTask(task: Task) {
+    const duplicatedTask = { ...task } as Partial<Task>;
+    delete duplicatedTask.id;
+    this.taskService.addTask(duplicatedTask).subscribe();
+  }
+
+  closeTask(task: Task) {
+    this.taskService
+      .updateTask(task.id, { ...task, status: 'completed' })
+      .subscribe();
+  }
 }
