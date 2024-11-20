@@ -1,5 +1,13 @@
 <div class="container-wrapper">
   <div class="task-container">
+    <div class="header">
+      <h1>Tasks</h1>
+      <button class="create-button" (click)="createNewTask()">
+        <i class="fas fa-plus"></i>
+        Create New Task
+      </button>
+    </div>
+
     <div class="filters">
       <div class="filter-item">
         <input
@@ -26,10 +34,14 @@
       </div>
 
       <div class="filter-item">
-        <select [(ngModel)]="filterCriteria.status" (change)="applyFilters()">
+        <select
+          [(ngModel)]="filterCriteria.status"
+          (ngModelChange)="applyFilters()"
+          class="form-control"
+        >
           <option value="">All Status</option>
-          <option value="pending">Pending</option>
-          <option value="completed">Completed</option>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
         </select>
       </div>
 
@@ -45,37 +57,43 @@
     <table class="tasks-table">
       <thead>
         <tr>
-          <th (click)="toggleSort('contact_person')" style="width: 20%">
+          <th (click)="toggleSort('contact_person')">
             Contact Person
             <span *ngIf="sortField === 'contact_person'">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </th>
-          <th (click)="toggleSort('entity_name')" style="width: 20%">
+          <th (click)="toggleSort('entity_name')">
             Entity Name
             <span *ngIf="sortField === 'entity_name'">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </th>
-          <th (click)="toggleSort('task_type')" style="width: 20%">
+          <th (click)="toggleSort('task_type')">
             Task Type
             <span *ngIf="sortField === 'task_type'">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </th>
-          <th (click)="toggleSort('status')" style="width: 15%">
+          <th (click)="toggleSort('status')">
             Status
             <span *ngIf="sortField === 'status'">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </th>
-          <th (click)="toggleSort('task_time')" style="width: 15%">
+          <th (click)="toggleSort('task_time')">
             Date
             <span *ngIf="sortField === 'task_time'">
               {{ sortDirection === "asc" ? "↑" : "↓" }}
             </span>
           </th>
-          <th style="width: 10%">Actions</th>
+          <th (click)="toggleSort('note')">
+            Note
+            <span *ngIf="sortField === 'note'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody>
@@ -83,18 +101,46 @@
           <td>{{ task.contact_person }}</td>
           <td>{{ task.entity_name }}</td>
           <td>{{ task.task_type }}</td>
-          <td>{{ task.status }}</td>
-          <td>{{ task.task_time | date }}</td>
+          <td>
+            <span
+              class="status-badge"
+              [ngClass]="'status-' + task.status.toLowerCase()"
+            >
+              {{ task.status }}
+            </span>
+          </td>
+          <td>{{ task.task_time | date : "short" }}</td>
+          <td class="note-cell" [title]="task.note">
+            {{ task.note | slice : 0 : 50
+            }}{{ task.note.length > 50 ? "..." : "" }}
+          </td>
           <td class="actions">
-            <button class="btn btn-sm btn-primary" (click)="editTask(task)">
-              Edit
-            </button>
-            <button class="btn btn-sm btn-info" (click)="duplicateTask(task)">
-              Duplicate
-            </button>
-            <button class="btn btn-sm btn-danger" (click)="deleteTask(task.id)">
-              Delete
-            </button>
+            <div class="dropdown">
+              <button
+                class="btn btn-secondary dropdown-toggle"
+                (click)="toggleDropdown(task.id)"
+              >
+                Actions
+              </button>
+              <div
+                class="dropdown-menu"
+                [class.show]="activeDropdown === task.id"
+              >
+                <a class="dropdown-item" (click)="editTask(task)">
+                  <i class="fas fa-edit"></i> Edit
+                </a>
+                <a class="dropdown-item" (click)="duplicateTask(task)">
+                  <i class="fas fa-copy"></i> Duplicate
+                </a>
+                <div class="dropdown-divider"></div>
+                <a
+                  class="dropdown-item text-danger"
+                  (click)="deleteTask(task.id)"
+                >
+                  <i class="fas fa-trash-alt"></i> Delete
+                </a>
+              </div>
+            </div>
           </td>
         </tr>
       </tbody>

@@ -1,30 +1,20 @@
-from flask import Flask, jsonify, request, make_response
+from flask import Flask
 from flask_cors import CORS
 from .models import db
-from .routes import bp as main_bp
+from .routes import bp
 
 def create_app():
     app = Flask(__name__)
+    CORS(app, resources={
+        r"/*": {
+            "origins": "http://localhost:4200",
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type"]
+        }
+    })
     
-    @app.after_request
-    def add_cors_headers(response):
-        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:4200'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        return response
-
-    @app.route('/tasks', methods=['OPTIONS'])
-    def handle_options():
-        response = make_response()
-        response.headers['Access-Control-Allow-Origin'] = 'http://localhost:4200'
-        response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
-        response.headers['Access-Control-Allow-Headers'] = 'Content-Type'
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        return response
-
     app.config.from_object('app.config.Config')
     db.init_app(app)
-    app.register_blueprint(main_bp)
-
+    app.register_blueprint(bp)
+    
     return app

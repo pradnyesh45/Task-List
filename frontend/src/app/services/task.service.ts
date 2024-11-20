@@ -1,80 +1,29 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError, BehaviorSubject } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:5000'; // Base URL
-
-  private httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-    }),
-  };
-
-  private tasksSubject = new BehaviorSubject<any[]>([]);
-  tasks$ = this.tasksSubject.asObservable();
+  private apiUrl = 'http://localhost:5000';
 
   constructor(private http: HttpClient) {}
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/tasks`).pipe(
-      tap((tasks) => {
-        this.tasksSubject.next(tasks); // Update the BehaviorSubject
-      })
-    );
+    return this.http.get<Task[]>(`${this.apiUrl}/tasks`);
   }
 
-  updateTask(id: number, task: Partial<Task>): Observable<any> {
-    const formattedTask = {
-      ...task,
-      task_time: this.formatDateForBackend(task.task_time),
-    };
-
-    return this.http
-      .put(`${this.apiUrl}/tasks/${id}`, formattedTask, this.httpOptions)
-      .pipe(
-        catchError((error) => {
-          console.error('Error details:', error);
-          return throwError(() => error);
-        })
-      );
-  }
-
-  private formatDateForBackend(
-    date: string | Date | undefined
-  ): string | undefined {
-    if (!date) return undefined;
-
-    const d = new Date(date);
-    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
-      2,
-      '0'
-    )}-${String(d.getDate()).padStart(2, '0')}T${String(d.getHours()).padStart(
-      2,
-      '0'
-    )}:${String(d.getMinutes()).padStart(2, '0')}`;
-  }
-
-  deleteTask(id: number): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/tasks/${id}`, this.httpOptions);
-  }
-
-  addTask(task: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/tasks`, task).pipe(
-      tap(() => {
-        this.getTasks().subscribe(); // Refresh the list after adding
-      })
-    );
-  }
-
-  createTask(task: Task) {
+  createTask(task: Task): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/tasks`, task);
   }
 
-  // ... other methods
+  updateTask(id: number, task: Task): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/tasks/${id}`, task);
+  }
+
+  deleteTask(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/tasks/${id}`);
+  }
 }

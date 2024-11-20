@@ -13,24 +13,25 @@ import { Task } from '../models/task.model';
 export class TaskEditModalComponent {
   @Input() task: Task = {
     id: 0,
-    team_member: '',
-    task_type: '',
-    status: '',
-    task_time: '',
-    entity_name: '',
     contact_person: '',
-    creation_date: '',
+    entity_name: '',
+    task_type: '',
+    status: 'open',
+    task_time: new Date().toISOString(),
+    creation_date: new Date().toISOString(),
     note: '',
   };
   @Input() show = false;
-  @Output() close = new EventEmitter<void>();
   @Output() save = new EventEmitter<Task>();
+  @Output() close = new EventEmitter<void>();
 
   onSave() {
+    console.log('Modal onSave called with task:', this.task);
     this.save.emit(this.task);
   }
 
   onClose() {
+    console.log('Modal onClose called');
     this.close.emit();
   }
 }
