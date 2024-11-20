@@ -44,3 +44,11 @@
     </tr>
   </tbody>
 </table>
+
+<app-task-edit-modal
+  *ngIf="editingTask"
+  [task]="editingTask"
+  [show]="showEditModal"
+  (close)="onCloseModal()"
+  (save)="onSaveTask($event)"
+></app-task-edit-modal>

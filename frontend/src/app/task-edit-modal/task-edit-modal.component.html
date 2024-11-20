@@ -1,0 +1,75 @@
+<div *ngIf="show" class="modal-backdrop" (click)="onClose()"></div>
+<div *ngIf="show" class="modal" tabindex="-1" style="display: block">
+  <div class="modal-dialog" (click)="$event.stopPropagation()">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Task</h5>
+        <button type="button" class="btn-close" (click)="onClose()"></button>
+      </div>
+      <div class="modal-body">
+        <form #taskForm="ngForm">
+          <div class="mb-3">
+            <label for="entityName" class="form-label">Entity Name</label>
+            <input
+              type="text"
+              class="form-control"
+              id="entityName"
+              [(ngModel)]="task.entity_name"
+              name="entityName"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="taskType" class="form-label">Task Type</label>
+            <input
+              type="text"
+              class="form-control"
+              id="taskType"
+              [(ngModel)]="task.task_type"
+              name="taskType"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="contactPerson" class="form-label">Contact Person</label>
+            <input
+              type="text"
+              class="form-control"
+              id="contactPerson"
+              [(ngModel)]="task.contact_person"
+              name="contactPerson"
+            />
+          </div>
+          <div class="mb-3">
+            <label for="note" class="form-label">Note</label>
+            <textarea
+              class="form-control"
+              id="note"
+              [(ngModel)]="task.note"
+              name="note"
+            ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="status" class="form-label">Status</label>
+            <select
+              class="form-select"
+              id="status"
+              [(ngModel)]="task.status"
+              name="status"
+            >
+              <option value="open">Open</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" (click)="onClose()">
+          Close
+        </button>
+        <button type="button" class="btn btn-primary" (click)="onSave()">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

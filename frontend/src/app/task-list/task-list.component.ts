@@ -3,17 +3,19 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService } from '../services/task.service';
 import { Task } from '../models/task.model';
+import { TaskEditModalComponent } from '../task-edit-modal/task-edit-modal.component';
 
 @Component({
   selector: 'app-task-list',
   templateUrl: './task-list.component.html',
   styleUrls: ['./task-list.component.scss'],
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TaskEditModalComponent],
 })
 export class TaskListComponent implements OnInit {
   tasks: Task[] = [];
-  editingTask: Task | null = null;
+  showEditModal = false;
+  editingTask?: Task;
 
   constructor(private taskService: TaskService) {
     this.taskService.tasks$.subscribe((tasks) => {
@@ -27,24 +29,22 @@ export class TaskListComponent implements OnInit {
 
   startEdit(task: Task) {
     this.editingTask = { ...task };
+    this.showEditModal = true;
   }
 
-  saveEdit() {
-    if (this.editingTask && this.editingTask.id) {
+  onSaveTask(updatedTask: any) {
+    if (this.editingTask?.id) {
       this.taskService
-        .updateTask(this.editingTask.id, this.editingTask)
-        .subscribe({
-          next: () => {
-            this.taskService.getTasks().subscribe();
-            this.editingTask = null;
-          },
-          error: (error) => console.error('Error updating task:', error),
+        .updateTask(this.editingTask.id, updatedTask as Task)
+        .subscribe(() => {
+          this.loadTasks();
         });
     }
+    this.showEditModal = false;
   }
 
-  cancelEdit() {
-    this.editingTask = null;
+  onCloseModal() {
+    this.showEditModal = false;
   }
 
   deleteTask(taskId: number) {
@@ -59,14 +59,33 @@ export class TaskListComponent implements OnInit {
   }
 
   duplicateTask(task: Task) {
-    const duplicatedTask = { ...task } as Partial<Task>;
-    delete duplicatedTask.id;
-    this.taskService.addTask(duplicatedTask).subscribe();
+    const { id, ...taskWithoutId } = task;
+    const duplicatedTask = {
+      ...taskWithoutId,
+      status: 'open',
+      task_time: new Date(),
+    };
+
+    this.taskService.createTask(duplicatedTask).subscribe(() => {
+      this.loadTasks();
+    });
   }
 
   closeTask(task: Task) {
+    if (task.id === undefined) return;
     this.taskService
-      .updateTask(task.id, { ...task, status: 'completed' })
-      .subscribe();
+      .updateTask(task.id, {
+        ...task,
+        status: 'completed',
+      })
+      .subscribe(() => {
+        this.loadTasks();
+      });
+  }
+
+  private loadTasks() {
+    this.taskService.getTasks().subscribe((tasks) => {
+      this.tasks = tasks;
+    });
   }
 }

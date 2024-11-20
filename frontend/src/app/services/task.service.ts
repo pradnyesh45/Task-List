@@ -72,5 +72,9 @@ export class TaskService {
     );
   }
 
+  createTask(task: Task) {
+    return this.http.post<Task>(`${this.apiUrl}/tasks`, task);
+  }
+
   // ... other methods
 }
