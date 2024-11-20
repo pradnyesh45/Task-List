@@ -57,5 +57,9 @@ export class TaskService {
     return this.http.delete(`${this.apiUrl}/tasks/${id}`, this.httpOptions);
   }
 
+  addTask(task: any) {
+    return this.http.post<any>(`${this.apiUrl}/tasks`, task);
+  }
+
   // ... other methods
 }

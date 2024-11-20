@@ -1,1 +1,64 @@
-<p>task-form works!</p>
+<form (ngSubmit)="onSubmit()" #taskForm="ngForm" class="task-form">
+  <div class="form-group">
+    <label for="entity_name">Entity Name</label>
+    <input
+      type="text"
+      id="entity_name"
+      name="entity_name"
+      [(ngModel)]="task.entity_name"
+      required
+      placeholder="Enter entity name"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="task_type">Task Type</label>
+    <select
+      id="task_type"
+      name="task_type"
+      [(ngModel)]="task.task_type"
+      required
+    >
+      <option *ngFor="let type of taskTypes" [value]="type">
+        {{ type | titlecase }}
+      </option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label for="task_time">Task Time</label>
+    <input
+      type="datetime-local"
+      id="task_time"
+      name="task_time"
+      [(ngModel)]="task.task_time"
+      required
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="contact_person">Contact Person</label>
+    <input
+      type="text"
+      id="contact_person"
+      name="contact_person"
+      [(ngModel)]="task.contact_person"
+      required
+      placeholder="Enter contact person"
+    />
+  </div>
+
+  <div class="form-group">
+    <label for="note">Note</label>
+    <textarea
+      id="note"
+      name="note"
+      [(ngModel)]="task.note"
+      placeholder="Enter any notes"
+    ></textarea>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="!taskForm.form.valid">Create Task</button>
+  </div>
+</form>
