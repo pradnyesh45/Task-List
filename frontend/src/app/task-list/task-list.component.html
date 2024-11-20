@@ -38,6 +38,13 @@
             <li>
               <a class="dropdown-item" (click)="closeTask(task)">Close Task</a>
             </li>
+            <li>
+              <a
+                class="dropdown-item text-danger"
+                (click)="task.id && deleteTask(task.id)"
+                >Delete</a
+              >
+            </li>
           </ul>
         </div>
       </td>
