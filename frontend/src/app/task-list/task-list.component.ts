@@ -59,28 +59,33 @@ export class TaskListComponent implements OnInit {
   }
 
   duplicateTask(task: Task) {
-    const { id, ...taskWithoutId } = task;
-    const duplicatedTask = {
-      ...taskWithoutId,
+    const duplicatedTask: Partial<Task> = {
+      entity_name: task.entity_name,
+      task_type: task.task_type,
+      contact_person: task.contact_person,
+      note: task.note,
       status: 'open',
-      task_time: new Date(),
+      task_time: new Date().toISOString().slice(0, 16),
+      creation_date: new Date().toISOString(),
     };
 
-    this.taskService.createTask(duplicatedTask).subscribe(() => {
-      this.loadTasks();
+    this.taskService.createTask(duplicatedTask as Task).subscribe({
+      next: () => this.taskService.getTasks().subscribe(),
+      error: (error) => console.error('Error creating task:', error),
     });
   }
 
   closeTask(task: Task) {
-    if (task.id === undefined) return;
-    this.taskService
-      .updateTask(task.id, {
-        ...task,
-        status: 'completed',
-      })
-      .subscribe(() => {
-        this.loadTasks();
-      });
+    if (!task.id) return;
+
+    const updatedTask: Partial<Task> = {
+      ...task,
+      status: 'completed',
+    };
+
+    this.taskService.updateTask(task.id, updatedTask as Task).subscribe(() => {
+      this.taskService.getTasks().subscribe();
+    });
   }
 
   private loadTasks() {
