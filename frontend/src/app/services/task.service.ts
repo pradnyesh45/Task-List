@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable, throwError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, throwError, BehaviorSubject } from 'rxjs';
+import { catchError, tap } from 'rxjs/operators';
 import { Task } from '../models/task.model';
 
 @Injectable({
@@ -16,10 +16,17 @@ export class TaskService {
     }),
   };
 
+  private tasksSubject = new BehaviorSubject<any[]>([]);
+  tasks$ = this.tasksSubject.asObservable();
+
   constructor(private http: HttpClient) {}
 
   getTasks(): Observable<Task[]> {
-    return this.http.get<Task[]>(`${this.apiUrl}/tasks`);
+    return this.http.get<Task[]>(`${this.apiUrl}/tasks`).pipe(
+      tap((tasks) => {
+        this.tasksSubject.next(tasks); // Update the BehaviorSubject
+      })
+    );
   }
 
   updateTask(id: number, task: Partial<Task>): Observable<any> {
@@ -57,8 +64,12 @@ export class TaskService {
     return this.http.delete(`${this.apiUrl}/tasks/${id}`, this.httpOptions);
   }
 
-  addTask(task: any) {
-    return this.http.post<any>(`${this.apiUrl}/tasks`, task);
+  addTask(task: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/tasks`, task).pipe(
+      tap(() => {
+        this.getTasks().subscribe(); // Refresh the list after adding
+      })
+    );
   }
 
   // ... other methods

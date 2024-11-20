@@ -1,36 +1,26 @@
 <div class="task-list">
-  <div *ngFor="let task of tasks" class="task-item">
-    <!-- Normal View -->
-    <div *ngIf="editingTask?.id !== task.id">
-      <div>{{ task.entity_name }}</div>
-      <div>{{ task.task_type }}</div>
-      <div>{{ task.task_time | date : "short" }}</div>
-      <div>{{ task.contact_person }}</div>
-      <div>{{ task.status }}</div>
+  <div class="header-row">
+    <div class="task-content">
+      <div class="entity-name">Entity Name</div>
+      <div class="task-type">Task Type</div>
+      <div class="task-time">Time</div>
+      <div class="contact">Contact Person</div>
+      <div class="status">Status</div>
+    </div>
+    <div class="actions">Actions</div>
+  </div>
+
+  <div class="task-row" *ngFor="let task of tasks">
+    <div class="task-content">
+      <div class="entity-name">{{ task.entity_name }}</div>
+      <div class="task-type">{{ task.task_type }}</div>
+      <div class="task-time">{{ task.task_time | date : "short" }}</div>
+      <div class="contact">{{ task.contact_person }}</div>
+      <div class="status">{{ task.status }}</div>
+    </div>
+    <div class="actions">
       <button (click)="startEdit(task)">Edit</button>
       <button (click)="deleteTask(task.id)">Delete</button>
-    </div>
-
-    <!-- Edit Form -->
-    <div *ngIf="editingTask && editingTask.id === task.id" class="edit-form">
-      <input [(ngModel)]="editingTask!.entity_name" placeholder="Entity Name" />
-      <input [(ngModel)]="editingTask!.task_type" placeholder="Task Type" />
-      <input type="datetime-local" [(ngModel)]="editingTask!.task_time" />
-      <input
-        [(ngModel)]="editingTask!.contact_person"
-        placeholder="Contact Person"
-      />
-      <select [(ngModel)]="editingTask!.status">
-        <option value="open">Open</option>
-        <option value="in-progress">In Progress</option>
-        <option value="completed">Completed</option>
-      </select>
-      <textarea [(ngModel)]="editingTask!.note" placeholder="Note"></textarea>
-
-      <div class="edit-buttons">
-        <button (click)="saveEdit()">Save</button>
-        <button (click)="cancelEdit()">Cancel</button>
-      </div>
     </div>
   </div>
 </div>
