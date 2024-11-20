@@ -1,61 +1,112 @@
-<table class="table table-striped">
-  <thead>
-    <tr>
-      <th scope="col">Date</th>
-      <th scope="col">Entity Name</th>
-      <th scope="col">Task Type</th>
-      <th scope="col">Contact Person</th>
-      <th scope="col">Notes</th>
-      <th scope="col">Status</th>
-      <th scope="col">Options</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr *ngFor="let task of tasks">
-      <td>{{ task.task_time | date : "medium" }}</td>
-      <td>{{ task.entity_name }}</td>
-      <td>{{ task.task_type }}</td>
-      <td>{{ task.contact_person }}</td>
-      <td>{{ task.note }}</td>
-      <td>{{ task.status }}</td>
-      <td>
-        <div class="dropdown">
-          <button
-            class="btn btn-secondary btn-sm dropdown-toggle"
-            type="button"
-            data-bs-toggle="dropdown"
-            aria-expanded="false"
-          >
-            Options
-          </button>
-          <ul class="dropdown-menu">
-            <li><a class="dropdown-item" (click)="startEdit(task)">Edit</a></li>
-            <li>
-              <a class="dropdown-item" (click)="duplicateTask(task)"
-                >Duplicate</a
-              >
-            </li>
-            <li>
-              <a class="dropdown-item" (click)="closeTask(task)">Close Task</a>
-            </li>
-            <li>
-              <a
-                class="dropdown-item text-danger"
-                (click)="task.id && deleteTask(task.id)"
-                >Delete</a
-              >
-            </li>
-          </ul>
-        </div>
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div class="container-wrapper">
+  <div class="task-container">
+    <div class="filters">
+      <div class="filter-item">
+        <input
+          [(ngModel)]="filterCriteria.contactPerson"
+          placeholder="Filter Contact Person"
+          (input)="applyFilters()"
+        />
+      </div>
 
-<app-task-edit-modal
-  *ngIf="editingTask"
-  [task]="editingTask"
-  [show]="showEditModal"
-  (close)="onCloseModal()"
-  (save)="onSaveTask($event)"
-></app-task-edit-modal>
+      <div class="filter-item">
+        <input
+          [(ngModel)]="filterCriteria.entityName"
+          placeholder="Filter Entity Name"
+          (input)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-item">
+        <input
+          [(ngModel)]="filterCriteria.taskType"
+          placeholder="Filter Task Type"
+          (input)="applyFilters()"
+        />
+      </div>
+
+      <div class="filter-item">
+        <select [(ngModel)]="filterCriteria.status" (change)="applyFilters()">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+
+      <div class="filter-item">
+        <input
+          type="date"
+          [(ngModel)]="filterCriteria.date"
+          (change)="applyFilters()"
+        />
+      </div>
+    </div>
+
+    <table class="tasks-table">
+      <thead>
+        <tr>
+          <th (click)="toggleSort('contact_person')" style="width: 20%">
+            Contact Person
+            <span *ngIf="sortField === 'contact_person'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th (click)="toggleSort('entity_name')" style="width: 20%">
+            Entity Name
+            <span *ngIf="sortField === 'entity_name'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th (click)="toggleSort('task_type')" style="width: 20%">
+            Task Type
+            <span *ngIf="sortField === 'task_type'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th (click)="toggleSort('status')" style="width: 15%">
+            Status
+            <span *ngIf="sortField === 'status'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th (click)="toggleSort('task_time')" style="width: 15%">
+            Date
+            <span *ngIf="sortField === 'task_time'">
+              {{ sortDirection === "asc" ? "↑" : "↓" }}
+            </span>
+          </th>
+          <th style="width: 10%">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let task of filteredTasks">
+          <td>{{ task.contact_person }}</td>
+          <td>{{ task.entity_name }}</td>
+          <td>{{ task.task_type }}</td>
+          <td>{{ task.status }}</td>
+          <td>{{ task.task_time | date }}</td>
+          <td class="actions">
+            <button class="btn btn-sm btn-primary" (click)="editTask(task)">
+              Edit
+            </button>
+            <button class="btn btn-sm btn-info" (click)="duplicateTask(task)">
+              Duplicate
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteTask(task.id)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <app-task-edit-modal
+      *ngIf="showEditModal"
+      [task]="editingTask!"
+      [show]="showEditModal"
+      (save)="onTaskSave($event)"
+      (close)="onModalClose()"
+    >
+    </app-task-edit-modal>
+  </div>
+</div>
