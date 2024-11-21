@@ -24,18 +24,6 @@ A full-stack task management application built with Angular and Flask.
 - PostgreSQL
 - Railway for hosting
 
-## 🏗️ Project Structure
-
-task-list/
-├── frontend/ # Angular application
-│ ├── src/ # Source files
-│ ├── dist/ # Build output
-│ └── package.json # Dependencies
-└── backend/ # Flask API
-├── app/ # Application code
-├── requirements.txt # Python dependencies
-└── run.py # Entry point
-
 ## 🚀 Getting Started
 
 ### Prerequisites
