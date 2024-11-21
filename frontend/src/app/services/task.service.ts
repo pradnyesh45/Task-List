@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
+import { environment } from '../../environments/environment.prod';
 
 type CreateTask = Omit<Task, 'id' | 'creation_date'>;
 
@@ -9,7 +10,7 @@ type CreateTask = Omit<Task, 'id' | 'creation_date'>;
   providedIn: 'root',
 })
 export class TaskService {
-  private apiUrl = 'http://localhost:5000';
+  private apiUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 

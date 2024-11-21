@@ -74,6 +74,8 @@
   border-radius: 10px;
   overflow: hidden;
   margin-top: 1rem;
+  position: relative;
+  overflow: visible;
 }
 
 .tasks-table th {
@@ -221,17 +223,14 @@
 
 .dropdown-menu {
   position: absolute;
-  top: 0;
-  right: 100%;
-  z-index: 1000;
+  z-index: 1050;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
   min-width: 180px;
   padding: 0.5rem;
   margin: 0;
-  background-color: #fff;
   border-radius: 8px;
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
-    0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  border: 1px solid #e2e8f0;
+  right: 0;
 }
 
 .dropdown-menu.show {
@@ -423,4 +422,113 @@ tr:nth-last-child(-n + 3) .dropdown-menu {
   th:nth-last-child(2) {
     display: none;
   }
+}
+
+/* Add or update these styles */
+.dropdown-menu {
+  z-index: 1000;
+  position: absolute;
+}
+
+/* If you're using ngb-dropdown, you might need */
+ngb-dropdown {
+  z-index: 1000;
+}
+
+/* Add these styles */
+.dropdown-menu {
+  position: absolute;
+  z-index: 1050;
+  background-color: white;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  min-width: 180px;
+  padding: 0.5rem;
+  margin: 0;
+  border-radius: 8px;
+  right: 0;
+}
+
+/* If you're using a container for the table */
+.table-container {
+  position: relative;
+  overflow: visible;
+}
+
+/* If using ngb-dropdown */
+ngb-dropdown {
+  position: relative;
+  z-index: 1050;
+}
+
+.delete-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.modal-header i {
+  color: #dc2626;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.modal-body {
+  margin-bottom: 1.5rem;
+  color: #4b5563;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-cancel {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #e5e7eb;
+  color: #374151;
+}
+
+.btn-delete {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background: #dc2626;
+  color: white;
+}
+
+.btn-cancel:hover {
+  background: #d1d5db;
+}
+
+.btn-delete:hover {
+  background: #b91c1c;
 }

@@ -1,0 +1,20 @@
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "${PORT:-5000}:5000"
+    environment:
+      - FLASK_APP=run.py
+      - PYTHONPATH=/app
+      - PORT=5000
+    command: python -m gunicorn --bind 0.0.0.0:5000 run:app
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "${PORT:-4200}:4200"
+    depends_on:
+      - backend
+    environment:
+      - PORT=4200
+      - BACKEND_URL=http://backend:5000

@@ -7,7 +7,11 @@ def create_app():
     app = Flask(__name__)
     CORS(app, resources={
         r"/*": {
-            "origins": "http://localhost:4200",
+            "origins": [
+                "http://localhost:4200", 
+                "http://localhost:80",
+                "https://cart-4cbdb.web.app"
+            ],
             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
             "allow_headers": ["Content-Type"]
         }

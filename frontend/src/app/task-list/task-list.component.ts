@@ -20,6 +20,8 @@ export class TaskListComponent implements OnInit {
   sortField: keyof Task = 'contact_person';
   sortDirection: 'asc' | 'desc' = 'asc';
   activeDropdown: number | null = null;
+  showDeleteModal = false;
+  taskToDeleteId: number | null = null;
 
   filterCriteria = {
     contactPerson: '',
@@ -168,12 +170,24 @@ export class TaskListComponent implements OnInit {
   }
 
   deleteTask(id: number) {
-    if (confirm('Are you sure you want to delete this task?')) {
-      this.taskService.deleteTask(id).subscribe(() => {
-        this.tasks = this.tasks.filter((t) => t.id !== id);
+    this.taskToDeleteId = id;
+    this.showDeleteModal = true;
+  }
+
+  confirmDelete() {
+    if (this.taskToDeleteId) {
+      this.taskService.deleteTask(this.taskToDeleteId).subscribe(() => {
+        this.tasks = this.tasks.filter((t) => t.id !== this.taskToDeleteId);
         this.applyFilters();
+        this.showDeleteModal = false;
+        this.taskToDeleteId = null;
       });
     }
+  }
+
+  cancelDelete() {
+    this.showDeleteModal = false;
+    this.taskToDeleteId = null;
   }
 
   toggleDropdown(taskId: number) {

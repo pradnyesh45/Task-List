@@ -4,6 +4,20 @@ from .models import Task, db
 
 bp = Blueprint('main', __name__)
 
+@bp.route('/')
+def read_root():
+    return jsonify({
+        "message": "Welcome to Task Manager API",
+        "status": "running",
+        "version": "1.0",
+        "endpoints": {
+            "get_tasks": "/tasks",
+            "create_task": "/tasks",
+            "update_task": "/tasks/<id>",
+            "delete_task": "/tasks/<id>"
+        }
+    })
+
 @bp.route('/tasks', methods=['GET'])
 def get_tasks():
     tasks = Task.query.all()
