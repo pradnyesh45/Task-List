@@ -27,7 +27,7 @@ export class TaskFormComponent {
   constructor(private taskService: TaskService) {}
 
   onSubmit() {
-    this.taskService.addTask(this.task).subscribe({
+    this.taskService.createTask(this.task).subscribe({
       next: () => {
         this.taskCreated.emit();
         this.resetForm();

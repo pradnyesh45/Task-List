@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
 
+type CreateTask = Omit<Task, 'id' | 'creation_date'>;
+
 @Injectable({
   providedIn: 'root',
 })
@@ -15,7 +17,7 @@ export class TaskService {
     return this.http.get<Task[]>(`${this.apiUrl}/tasks`);
   }
 
-  createTask(task: Task): Observable<Task> {
+  createTask(task: CreateTask): Observable<Task> {
     return this.http.post<Task>(`${this.apiUrl}/tasks`, task);
   }
 
