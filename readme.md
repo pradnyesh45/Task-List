@@ -6,6 +6,7 @@ A full-stack task management application built with Angular and Flask.
 
 - Frontend: [https://cart-4cbdb.web.app/](https://cart-4cbdb.web.app/)
 - Backend API: [https://task-list-production-5060.up.railway.app/](https://task-list-production-5060.up.railway.app/)
+- Video Demo: [Watch Demo](https://drive.google.com/file/d/1krevTYcsYy4O2KQEpmwT1j7gwmI5a90H/view?usp=sharing)
 
 ## 🛠️ Tech Stack
 
